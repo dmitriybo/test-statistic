@@ -1,0 +1,41 @@
+{
+  "name": "backend",
+  "scripts": {
+    "dev": "npm run prisma:generate && ts-node-dev --respawn --transpile-only --poll src/index.ts",
+    "build": "npm run prisma:generate && npx esbuild src/index.ts --outfile=dist/index.js --bundle --platform=node",
+    "start": "npm run migrate:prod && node dist/index.js",
+    "migrate:dev": "npx prisma migrate dev",
+    "migrate:prod": "npx prisma migrate deploy",
+    "prisma:format": "npx prisma format",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate-dev": " npm run migrate:dev",
+    "seed:currencies": "tsx src/seeds/seedCurrencies.ts",
+    "seed:test-data": "tsx src/seeds/seedTestData.ts",
+    "refresh:kpi": "npm run prisma:generate && ts-node src/cron/refreshKpi.ts"
+  },
+  "dependencies": {
+    "@graphql-tools/load-files": "^7.0.1",
+    "@graphql-tools/merge": "^9.1.1",
+    "@graphql-tools/schema": "^10.0.25",
+    "@prisma/client": "^6.16.2",
+    "apollo-server": "^3.12.0",
+    "cuid": "^3.0.0",
+    "dotenv": "^16.3.1",
+    "graphql": "^16.7.1",
+    "jsonwebtoken": "^9.0.2",
+    "luxon": "^3.7.2",
+    "node-cron": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/luxon": "^3.7.1",
+    "date-fns": "^4.1.0",
+    "esbuild": "^0.25.10",
+    "prisma": "^6.16.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.2.2",
+    "wait-on": "^9.0.1"
+  }
+}

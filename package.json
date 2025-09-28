@@ -1,0 +1,39 @@
+{
+  "name": "test-statistic",
+  "scripts": {
+    "install": "concurrently \"cd backend && npm install && npm run generate\" \"cd frontend && npm install\"",
+    "dev": "docker compose -f docker-compose.dev.yml up --build",
+    "dev:down": "docker compose -f docker-compose.dev.yml down",
+    "start": "docker compose -f docker-compose.prod.yml up --build -d",
+    "start:down": "docker compose -f docker-compose.prod.yml down",
+    "mock-start": "npm run start && wait-on http://localhost:3000 && npm run seed:currencies && npm run seed:test-data",
+    "prisma:format": "cd backend && npm run prisma:format",
+    "prisma:generate": "cd backend && npm run prisma:generate",
+    "prisma:migrate-dev": "cd backend && npm run prisma:migrate:dev",
+    "lint": "eslint --cache --fix \"{backend/src,frontend/src}/**/*.{ts,tsx}\"",
+    "lint-ci": "eslint --cache \"{backend/src,frontend/src}/**/*.{ts,tsx}\" --max-warnings 0",
+    "tsc": "tsc --noEmit",
+    "seed:currencies": "cd backend && npm run seed:currencies",
+    "seed:test-data": "cd backend && npm run seed:test-data"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.4.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.36.0",
+    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-helpers": "^2.0.1",
+    "eslint-plugin-no-relative-import-paths": "^1.6.1",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-prisma": "^5.0.0",
+    "wait-on": "^9.0.1"
+  }
+}

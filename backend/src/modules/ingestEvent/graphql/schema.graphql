@@ -1,0 +1,19 @@
+enum EventType {
+    LOGIN
+    TRY
+}
+
+input IngestEventInput {
+    type: EventType!
+    eventId: String!
+}
+
+type EventResponse {
+    success: Boolean!
+    message: String
+    eventId: String
+}
+
+type Mutation {
+    ingestEvent(event: IngestEventInput!): EventResponse!
+}

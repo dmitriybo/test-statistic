@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: appdb
+    ports:
+      - "5555:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    shm_size: 2g
+    privileged: true
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://app:secret@db:5432/appdb
+      JWT_SECRET: secret
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./frontend/src:/app/src
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      PORT: 3000
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+
+  refresh:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/src:/app/prod
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://app:secret@db:5432/appdb
+      REFRESH_HOURLY: 1
+      REFRESH_DAILY: 1
+      REFRESH_WEEKLY: 1
+      REFRESH_MONTHLY: 1
+    command: [ "npm", "run", "refresh:kpi" ]
+
+volumes:
+  pgdata:

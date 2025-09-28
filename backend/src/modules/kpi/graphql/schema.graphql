@@ -1,0 +1,30 @@
+scalar DateTime
+
+enum Interval {
+  HOUR
+  DAY
+  WEEK
+  MONTH
+}
+
+type KPI {
+  bucketStart: DateTime!
+  firstDepositCount: Int!
+  reg2Try: Float
+  reg2Dep: Float
+  avgFD: Float
+  rdPerFd: Float
+  try2Rd: Float
+  avgRD: Float
+  avgDeposit: Float
+}
+
+type Query {
+  kpi(
+    from: DateTime!
+    to: DateTime!
+    interval: Interval!
+    timezone: String = "UTC"
+    currencies: [String!]
+  ): [KPI!]!
+}

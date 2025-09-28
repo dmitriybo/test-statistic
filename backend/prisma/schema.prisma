@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Currency {
+  code     String      @id @db.VarChar(8)
+  name     String
+  symbol   String      @db.VarChar(8)
+  deposits Deposit[]
+  hourly   KpiHourlyAgg[]
+
+  @@map("currencies")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  deposits  Deposit[]
+  tries     Try[]
+  logins    Login[]
+
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Login {
+  id        BigInt   @id @default(autoincrement())
+  eventId   String   @unique @map("event_id") // Ключ идемпотентности
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+  @@map("logins")
+}
+
+model Try {
+  id        BigInt   @id @default(autoincrement())
+  eventId   String   @unique @map("event_id") // Ключ идемпотентности
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  isFirst   Boolean  @default(false) @map("is_first")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@map("tries")
+}
+
+model Deposit {
+  id           BigInt   @id @default(autoincrement())
+  eventId      String   @unique @map("event_id") // Ключ идемпотентности
+  userId       String   @map("user_id")
+  amount       Decimal  @db.Decimal(30, 8)
+  currencyCode String   @map("currency_code")
+  createdAt    DateTime @default(now()) @map("created_at")
+  isFirst      Boolean  @default(false) @map("is_first")
+
+  currency Currency @relation(fields: [currencyCode], references: [code])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, isFirst], map: "uniq_user_first_deposit") // гарантирует 1 FD на пользователя
+  @@index([createdAt])
+  @@index([currencyCode, createdAt])
+  @@index([userId, createdAt])
+  @@index([isFirst])
+  @@map("deposits")
+}
+
+model KpiHourlyAgg {
+  bucketStart       DateTime @map("bucket_start")
+  currencyCode      String   @map("currency_code")
+  registrations     Int      @default(0)
+  triesCount        Int      @default(0) @map("try_count")
+  fdCount           Int      @default(0) @map("first_deposit_count")
+  fdSum             Decimal  @default(0) @map("first_deposit_sum") @db.Decimal(30, 8)
+  rdCount           Int      @default(0) @map("repeat_deposit_count")
+  rdSum             Decimal  @default(0) @map("repeat_deposit_sum") @db.Decimal(30, 8)
+  totalDepositCount Int      @default(0) @map("total_deposit_count")
+  totalDepositSum   Decimal  @default(0) @map("total_deposit_sum") @db.Decimal(30, 8)
+
+  currency Currency @relation(fields: [currencyCode], references: [code])
+
+  @@id([bucketStart, currencyCode])
+  @@index([currencyCode, bucketStart])
+  @@index([currencyCode, bucketStart], map: "idx_kpi_hourly_agg_currency_date")
+  @@map("kpi_hourly_agg")
+}

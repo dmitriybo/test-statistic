@@ -1,0 +1,9 @@
+type Currency {
+  code: String!
+  name: String!
+  symbol: String!
+}
+
+type Query {
+  currencies: [Currency!]!
+}
