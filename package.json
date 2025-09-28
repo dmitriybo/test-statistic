@@ -1,12 +1,12 @@
 {
   "name": "test-statistic",
   "scripts": {
-    "install": "concurrently \"cd backend && npm install && npm run generate\" \"cd frontend && npm install\"",
+    "install": "concurrently \"cd backend && npm install\" \"cd frontend && npm install\"",
     "dev": "docker compose -f docker-compose.dev.yml up --build",
     "dev:down": "docker compose -f docker-compose.dev.yml down",
     "start": "docker compose -f docker-compose.prod.yml up --build -d",
     "start:down": "docker compose -f docker-compose.prod.yml down",
-    "mock-start": "npm run start && wait-on http://localhost:3000 && npm run seed:currencies && npm run seed:test-data",
+    "mock-start": "npm run start && node backend/src/utils/sleep-script.js && npm run seed:currencies && npm run seed:test-data",
     "prisma:format": "cd backend && npm run prisma:format",
     "prisma:generate": "cd backend && npm run prisma:generate",
     "prisma:migrate-dev": "cd backend && npm run prisma:migrate:dev",

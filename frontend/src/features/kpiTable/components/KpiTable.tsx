@@ -77,10 +77,10 @@ export const KpiTable: FC<KpiTableProps> = memo(({ className, data = [], interva
             })}
           </TableBody>
         </Table>
-      </div>
 
-      {!data.length && !loadingKpi && <p className="text-center text-sm py-10 text-muted-foreground">Нет данных</p>}
-      {!data.length && loadingKpi && <p className="text-center text-sm py-10 text-muted-foreground">Загрузка...</p>}
+        {!data.length && !loadingKpi && <p className="text-center text-sm pt-20 pb-10 text-muted-foreground">Нет данных</p>}
+        {!data.length && loadingKpi && <p className="text-center text-sm pt-20 pb-10 text-muted-foreground">Загрузка...</p>}
+      </div>
     </div>
   )
 })

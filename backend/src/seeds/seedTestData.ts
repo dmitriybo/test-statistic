@@ -169,6 +169,7 @@ async function main() {
   await refreshKpiImmediately()
 
   console.log('Seeding completed!')
+  console.log('Open http://localhost:3000/')
 }
 
 main()
