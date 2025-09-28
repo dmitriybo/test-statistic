@@ -39,7 +39,7 @@ export const KpiForm = () => {
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     const variables = {
       from: formData.from.toISOString(),
-      to: formData.to.toISOString(),
+      to: addDays(formData.to, 1).toISOString(),
       interval: formData.interval,
       currencies: formData.currencies,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
