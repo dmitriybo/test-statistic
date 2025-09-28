@@ -1,26 +1,41 @@
 import { DateTime } from 'luxon'
 
 import { prisma } from '../../../config/prisma/prisma'
-import { KpiRow } from '../types'
+import { Interval, KpiRow } from '../types'
 
 export const getKpiRowsByInterval = async (
   table: string,
   from: Date,
   to: Date,
   timezone = 'UTC',
-  currencies?: string[],
+  currencies: string[] = [],
+  interval: Interval,
 ) => {
-  const fromLocal = DateTime.fromISO(from.toISOString(), { zone: 'utc' }).setZone(timezone).toJSDate()
-  const toLocal = DateTime.fromISO(to.toISOString(), { zone: 'utc' }).setZone(timezone).toJSDate()
+  let fromLocal = DateTime.fromJSDate(from, { zone: 'utc' }).setZone(timezone).toJSDate()
+  let toLocal = DateTime.fromJSDate(to, { zone: 'utc' }).setZone(timezone).toJSDate()
+
+  if (interval === 'HOUR') {
+    toLocal = DateTime.fromJSDate(toLocal).plus({ hours: 24 }).toJSDate()
+  }
+  if (interval === 'DAY') {
+    toLocal = DateTime.fromJSDate(toLocal).plus({ days: 1 }).toJSDate()
+  }
+  if (interval === 'WEEK') {
+    fromLocal = DateTime.fromJSDate(fromLocal).startOf('week').toJSDate()
+    toLocal = DateTime.fromJSDate(toLocal).endOf('week').toJSDate()
+  }
+  if (interval === 'MONTH') {
+    fromLocal = DateTime.fromJSDate(fromLocal).startOf('month').toJSDate()
+    toLocal = DateTime.fromJSDate(toLocal).endOf('month').toJSDate()
+  }
 
   if (currencies?.length) {
     return prisma.$queryRawUnsafe<KpiRow[]>(
       `
       SELECT
         bucket_start AT TIME ZONE 'UTC' AT TIME ZONE $3 AS bucket_start,
-        currency_code,
-        SUM(registrations) AS registrations,
-        SUM(try_count) AS try_count,
+        MAX(registrations) AS registrations,
+        MAX(try_count) AS try_count,
         SUM(first_deposit_count) AS first_deposit_count,
         SUM(first_deposit_sum) AS first_deposit_sum,
         SUM(repeat_deposit_count) AS repeat_deposit_count,
@@ -31,7 +46,7 @@ export const getKpiRowsByInterval = async (
       WHERE bucket_start >= $1
         AND bucket_start < $2
         AND currency_code = ANY($4)
-      GROUP BY bucket_start, currency_code
+      GROUP BY bucket_start
       ORDER BY bucket_start
       `,
       fromLocal,
@@ -44,9 +59,9 @@ export const getKpiRowsByInterval = async (
   return prisma.$queryRawUnsafe<KpiRow[]>(
     `
     SELECT
-      bucket_start AT TIME ZONE $3 AS bucket_start,
-      SUM(registrations) AS registrations,
-      SUM(try_count) AS try_count,
+      bucket_start AT TIME ZONE 'UTC' AT TIME ZONE $3 AS bucket_start,
+      MAX(registrations) AS registrations,
+      MAX(try_count) AS try_count,
       SUM(first_deposit_count) AS first_deposit_count,
       SUM(first_deposit_sum) AS first_deposit_sum,
       SUM(repeat_deposit_count) AS repeat_deposit_count,

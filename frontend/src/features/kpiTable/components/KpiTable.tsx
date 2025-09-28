@@ -14,7 +14,7 @@ interface KpiTableProps {
 
 export const KpiTable: FC<KpiTableProps> = memo(({ className, data = [], interval, loadingKpi }) => {
   const parentRef = useRef<HTMLDivElement>(null)
-
+  console.log(data)
   const rowVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => parentRef.current,
@@ -45,7 +45,7 @@ export const KpiTable: FC<KpiTableProps> = memo(({ className, data = [], interva
           <TableBody
             style={{
               position: 'relative',
-              height: `${rowVirtualizer.getTotalSize()}px`,
+              height: `${rowVirtualizer.getTotalSize() + 40}px`,
             }}
           >
             {rowVirtualizer.getVirtualItems().map((virtualRow) => {
@@ -78,8 +78,12 @@ export const KpiTable: FC<KpiTableProps> = memo(({ className, data = [], interva
           </TableBody>
         </Table>
 
-        {!data.length && !loadingKpi && <p className="text-center text-sm pt-20 pb-10 text-muted-foreground">Нет данных</p>}
-        {!data.length && loadingKpi && <p className="text-center text-sm pt-20 pb-10 text-muted-foreground">Загрузка...</p>}
+        {!data.length && !loadingKpi && (
+          <p className="text-center text-sm pt-20 pb-10 text-muted-foreground">Нет данных</p>
+        )}
+        {!data.length && loadingKpi && (
+          <p className="text-center text-sm pt-20 pb-10 text-muted-foreground">Загрузка...</p>
+        )}
       </div>
     </div>
   )

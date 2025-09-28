@@ -17,7 +17,7 @@ export const formSchema = z
     ),
     currencies: z.array(z.string()).optional(),
   })
-  .refine((data) => data.from < data.to, {
+  .refine((data) => data.from <= data.to, {
     message: 'Дата начала должна быть меньше даты конца периода',
     path: ['from'],
   })

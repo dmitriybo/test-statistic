@@ -8,7 +8,7 @@ export class KpiService {
     const { from, to, interval, timezone, currencies } = args
     const table = getTable(interval)
 
-    const rows = await getKpiRowsByInterval(table, from, to, timezone, currencies)
+    const rows = await getKpiRowsByInterval(table, from, to, timezone, currencies, interval)
 
     return rows.map((r) => ({
       bucketStart: r.bucket_start,
