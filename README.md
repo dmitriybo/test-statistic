@@ -39,7 +39,7 @@ npm run seed:test-data
 
 1. **Схема БД** — спроектирована в Prisma ORM (Postgres ≥14).
 1. **Идемпотентность** — гарантируется уникальными ключами.
-1. **Агрегации** — kpi_hourly_agg + материализованные вьюхи (daily/weekly/monthly) для SLA ≤ 10 сек.
+1. **Агрегации** — kpi_hourly_agg + материализованные представления (daily/weekly/monthly) для SLA ≤ 10 сек.
 1. **Скрипты обновления** — hourly refresh + REFRESH MATERIALIZED VIEW [CONCURRENTLY].
 1. **GraphQL API (Apollo Server)** — запрос KPI с параметрами (from, to, interval, timezone, currency[]).
 1. **Таймзона** — корректная нормализация по таймзоне пользователя.
