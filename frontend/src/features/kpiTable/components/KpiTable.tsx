@@ -14,7 +14,7 @@ interface KpiTableProps {
 
 export const KpiTable: FC<KpiTableProps> = memo(({ className, data = [], interval, loadingKpi }) => {
   const parentRef = useRef<HTMLDivElement>(null)
-  console.log(data)
+
   const rowVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => parentRef.current,

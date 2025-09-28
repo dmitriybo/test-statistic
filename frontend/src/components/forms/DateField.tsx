@@ -80,6 +80,7 @@ export const DateField: FC<DateFieldProps> = ({
               setOpen(false)
             }}
             selected={date}
+            weekStartsOn={1}
           />
         </PopoverContent>
       </Popover>

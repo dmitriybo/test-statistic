@@ -12,14 +12,8 @@ export const getKpiRowsByInterval = async (
   interval: Interval,
 ) => {
   let fromLocal = DateTime.fromJSDate(from, { zone: 'utc' }).setZone(timezone).toJSDate()
-  let toLocal = DateTime.fromJSDate(to, { zone: 'utc' }).setZone(timezone).toJSDate()
+  let toLocal = DateTime.fromJSDate(to, { zone: 'utc' }).setZone(timezone).plus({ days: 1 }).toJSDate()
 
-  if (interval === 'HOUR') {
-    toLocal = DateTime.fromJSDate(toLocal).plus({ hours: 24 }).toJSDate()
-  }
-  if (interval === 'DAY') {
-    toLocal = DateTime.fromJSDate(toLocal).plus({ days: 1 }).toJSDate()
-  }
   if (interval === 'WEEK') {
     fromLocal = DateTime.fromJSDate(fromLocal).startOf('week').toJSDate()
     toLocal = DateTime.fromJSDate(toLocal).endOf('week').toJSDate()
